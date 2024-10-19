@@ -70,6 +70,7 @@ export default {
                 localStorage.setItem('isAuth', result.userId);
                 changeIsAuth(true);
                 authUserIdChange(result.userId ?? '');
+                closeLoginModal();
             } else {
                 alert('Failed to login.');
             }
