@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toggleLoginModal } from '@/events/eventBus'
 
 </script>
 
@@ -30,7 +31,7 @@
         <NuxtLink to="/" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Home</NuxtLink>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <NuxtLink to="/" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Log in <span aria-hidden="true">&rarr;</span></NuxtLink>
+        <button @click="toggleLoginModal"  class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Log in <span aria-hidden="true">&rarr;</span></button>
       </div>
     </nav>
     <div class="lg:hidden" role="dialog" aria-modal="true">
@@ -54,7 +55,7 @@
               <NuxtLink to="/" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Home</NuxtLink>
             </div>
             <div class="py-6">
-                <NuxtLink to="/" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Log in</NuxtLink>
+                <a href="/" @click.prevent="toggleLoginModal"  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Log in</a>
             </div>
           </div>
         </div>
@@ -63,5 +64,3 @@
     </UContainer>
   </header>
 </template>
-
-<style scoped></style>
