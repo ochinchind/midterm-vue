@@ -1,8 +1,16 @@
 <script setup lang="ts">
+
+import { useRouter } from 'vue-router'
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
 import { showLoginModal, toggleLoginModal } from '~/scripts/loginModal'
 
+
+const router = useRouter()
+
+function goToProductsPage() {
+  router.push('/products') 
+}
 
 const schemaLogin = object({
   username: string().required('Username is required').max(255, 'Maximum 255 characters'),
@@ -176,10 +184,11 @@ export default {
             Discover sneakers that will lead you to success
           </p>
           <button
-            class="px-4 py-2 self-start bg-orange-200 rounded-md text-lg cursor-pointer btn-orange"
-          >
-            Browse Sneakers
-          </button>
+          class="px-4 py-2 self-start bg-orange-200 rounded-md text-lg cursor-pointer btn-orange"
+          @click="goToProductsPage"
+        >
+          Browse Sneakers
+        </button>
         </div>
         <div class="flex-1 order-1 lg:order-2">
           <NuxtImg
