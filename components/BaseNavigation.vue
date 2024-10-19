@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toggleLoginModal } from '@/events/eventBus'
+import { toggleLoginModal } from '~/scripts/loginModal'
 
 </script>
 

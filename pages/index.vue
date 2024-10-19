@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
-import { showLoginModal, toggleLoginModal } from '@/events/eventBus'
+import { showLoginModal, toggleLoginModal } from '~/scripts/loginModal'
 
 
 const schemaLogin = object({
