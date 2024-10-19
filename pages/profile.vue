@@ -69,6 +69,7 @@ async function updateUser() {
     const result = await res.json();
     if (result.success) {
       alert('User updated successfully!');
+      if (user.value) 
       user.value = { ...user.value, ...formState }; // Update local user state
     } else {
       alert('Failed to update user.');
