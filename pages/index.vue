@@ -1,7 +1,5 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 // Script remains available for future logic
-=======
 
 import { useRouter } from 'vue-router'
 import { object, string, type InferType } from 'yup'
@@ -10,6 +8,19 @@ import { showLoginModal, toggleLoginModal, closeLoginModal } from '~/scripts/log
 import { isAuth, authUserId, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, logout } from '~/scripts/auth'
 
 const router = useRouter()
+
+// Define your categories
+const categories = [
+  { name: 'Men', slug: 'men' },
+  { name: 'Women', slug: 'women' },
+  { name: 'Kids', slug: 'kids' },
+  { name: 'Accessories', slug: 'accessories' }
+]
+
+// Function to navigate to the selected category
+function goToCategory(slug: string) {  // Explicitly define the type of slug
+  router.push(`/products/${slug}`)
+}
 
 function goToProductsPage() {
   router.push('/products') 
@@ -84,7 +95,6 @@ export default {
     },
   }
 }
->>>>>>> b02a3b396edd9b4bddd59e82c6036f2cd193a8a6
 </script>
 
 <style scoped>
@@ -176,7 +186,6 @@ p {
     background-color: rgb(251 146 60);
 }
 
-<<<<<<< HEAD
 .footer {
     background-color: #1a1a1a;
     color: white;
@@ -249,6 +258,7 @@ body {
 /* Section Styles */
 .section {
   padding: 2rem 0;
+  margin-top: 1.5em;
 }
 
 .section-title {
@@ -369,75 +379,6 @@ body {
     <!-- Hero Section -->
     <section class="section">
       <div class="container flex flex-col lg:flex-row items-center gap-10">
-=======
-.modal {
-  display: block; /* Show the modal */
-  position: fixed; 
-  z-index: 1; 
-  left: 0;
-  top: 0;
-  width: 100%; 
-  height: 100%; 
-  background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-  background-color: #fff;
-  margin: 15% auto;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 400px;
-  border-radius: 8px;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-}
-</style>
-
-<style scoped>
-</style>
-
-<template>
-    <div v-show="showLoginModal" class="modal" @click.self="closeLoginModal">
-      <div class="modal-content">
-        <span class="close" @click="closeLoginModal">&times;</span>
-        <h2 style="text-align: center;
-    color: white;
-    padding: 20px;
-    margin: 0;" class="bg-orange-500">Login</h2>
-        <div class="modal-body" style=" text-align: center;   padding: 20px;">
-          <UForm @submit="LoginSubmit" :schema="schemaLogin" :state="stateLogin" >
-            <UFormGroup label="Username" name="username">
-                <UInput class="bg-white black" v-model="stateLogin.username" type="text" placeholder="Enter username" />
-            </UFormGroup>
-            <UFormGroup label="Password" name="password">
-                <UInput class="bg-white black" v-model="stateLogin.password" type="password" placeholder="Enter password" />
-            </UFormGroup>
-            <div class="mt-2">
-                <UButton type="submit" class="btn btn-orange bg-orange-200">
-                    Login
-                </UButton>
-            </div>
-          </UForm>
-        </div>
-      </div>
-    </div>
-
-
-    <main>
-    <section >
-      <div class="container flex flex-col lg:flex-row items-center py-20 gap-10">
->>>>>>> b02a3b396edd9b4bddd59e82c6036f2cd193a8a6
         <div class="flex-1 order-2 lg:order-1 text-center lg:text-left">
           <h1 class="text-4xl lg:text-6xl font-extrabold mb-6 text-balance">
             Luxury Sneakers - Unleash Your Potential!
@@ -445,18 +386,12 @@ body {
           <p class="text-xl lg:text-2xl mb-8 text-balance">
             Discover sneakers that will elevate your style and performance.
           </p>
-<<<<<<< HEAD
-          <button class="btn-orange">
+          <button
+            class="px-4 py-2 self-start bg-orange-200 rounded-md text-lg cursor-pointer btn-orange"
+            @click="goToProductsPage"
+          >
             Browse Sneakers
           </button>
-=======
-          <button
-          class="px-4 py-2 self-start bg-orange-200 rounded-md text-lg cursor-pointer btn-orange"
-          @click="goToProductsPage"
-        >
-          Browse Sneakers
-        </button>
->>>>>>> b02a3b396edd9b4bddd59e82c6036f2cd193a8a6
         </div>
         <div class="flex-1 order-1 lg:order-2">
           <NuxtImg class="w-100" src="/sneakers.webp" alt="Sneakers shop" />
@@ -464,23 +399,23 @@ body {
       </div>
     </section>
 
-     <!-- New Arrivals Section -->
-     <section class="new-arrivals section">
+    <!-- New Arrivals Section -->
+    <section class="new-arrivals section">
       <h2 class="section-title">New Arrivals</h2>
       <div class="product-grid">
         <!-- Example Product Item -->
         <div class="product-item">
-          <NuxtImg class="product-image" src="#" alt="Sneaker 1" />
+          <NuxtImg class="product-image" src="/sneakers.jpg" alt="Sneaker 1" />
           <h3 class="product-name">Sneaker Model 1</h3>
           <p class="product-price">$120.00</p>
         </div>
         <div class="product-item">
-          <NuxtImg class="product-image" src="#" alt="Sneaker 2" />
+          <NuxtImg class="product-image" src="/sneakers.jpg" alt="Sneaker 2" />
           <h3 class="product-name">Sneaker Model 2</h3>
           <p class="product-price">$150.00</p>
         </div>
         <div class="product-item">
-          <NuxtImg class="product-image" src="#" alt="Sneaker 3" />
+          <NuxtImg class="product-image" src="/sneakers.jpg" alt="Sneaker 3" />
           <h3 class="product-name">Sneaker Model 3</h3>
           <p class="product-price">$130.00</p>
         </div>
@@ -488,21 +423,34 @@ body {
       </div>
     </section>
 
-    <!-- Categories Section -->
-    <section class="categories section">
-      <h2 class="section-title">Shop By Category</h2>
-      <div class="category-grid">
-        <div class="category-item">Men</div>
-        <div class="category-item">Women</div>
-        <div class="category-item">Kids</div>
-        <div class="category-item">Accessories</div>
+     <!-- Categories Section -->
+  <section class="categories section">
+    <h2 class="section-title">Shop By Category</h2>
+    <div class="category-grid">
+      <!-- Render categories dynamically -->
+      <div
+        v-for="category in categories"
+        :key="category.slug"
+        class="category-item"
+        @click="goToCategory(category.slug)"
+      >
+        {{ category.name }}
       </div>
-    </section>
+    </div>
+  </section>
 
     <!-- Promotions Section -->
     <section class="promotions section">
       <h2 class="section-title">Special Offers</h2>
       <p class="promotion-message">Get up to 50% off on selected items!</p>
+    </section>
+
+    <!-- Newsletter Signup -->
+    <section class="newsletter section">
+      <h2 class="section-title">Subscribe to Our Newsletter</h2>
+      <p>Get the latest updates and exclusive offers.</p>
+      <input type="email" class="newsletter-input" placeholder="Enter your email" />
+      <button class="btn-orange">Subscribe</button>
     </section>
 
     <!-- Testimonials Section -->
@@ -522,30 +470,22 @@ body {
       </div>
     </section>
 
-    <!-- Newsletter Signup -->
-    <section class="newsletter section">
-      <h2 class="section-title">Subscribe to Our Newsletter</h2>
-      <p>Get the latest updates and exclusive offers.</p>
-      <input type="email" class="newsletter-input" placeholder="Enter your email" />
-      <button class="btn-orange">Subscribe</button>
-    </section>
-
   </main>
 
-   <!-- Footer Section -->
-   <footer class="footer">
-            <div class="container mx-auto text-center">
-                <div class="footer-links">
-                    <a href="/">Home</a>
-                    <a href="/about">About Us</a>
-                    <a href="/contact">Contact</a>
-                </div>
-                <div class="footer-social">
-                    <a href="#"><img src="#" alt="Facebook"></a>
-                    <a href="#"><img src="#" alt="Twitter"></a>
-                    <a href="#"><img src="#" alt="Instagram"></a>
-                </div>
-                <p class="mt-4">&copy; 2024 Sneaker Shop. All rights reserved.</p>
-            </div>
-    </footer>
+  <!-- Footer Section -->
+  <footer class="footer">
+    <div class="container mx-auto text-center">
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/about">About Us</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="footer-social">
+        <a href="#"><img src="/facebook.png" alt="Facebook"></a>
+        <a href="#"><img src="/twitter.png" alt="Twitter"></a>
+        <a href="#"><img src="/instagram.png" alt="Instagram"></a>
+      </div>
+      <p class="mt-4">&copy; 2024 Sneaker Shop. All rights reserved.</p>
+    </div>
+  </footer>
 </template>
