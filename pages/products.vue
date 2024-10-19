@@ -33,7 +33,8 @@
       <div
         v-for="(product, index) in filteredProducts"
         :key="index"
-        class="border p-4 bg-white shadow-lg rounded-lg transform hover:scale-105 transition-transform duration-300 hover:shadow-2xl"
+        class="border p-4 bg-white shadow-lg rounded-lg transform hover:scale-105 transition-transform duration-300 hover:shadow-2xl cursor-pointer"
+        @click="goToProductPage(product.id)"
       >
         <img :src="product.image" alt="Sneaker image" class="w-full h-40 object-cover rounded-t-lg mb-4" />
         <h2 class="text-lg font-semibold mb-2 text-gray-700">{{ product.name }}</h2>
@@ -46,10 +47,6 @@
             <i v-else class="far fa-star"></i>
           </span>
         </div>
-
-        <button class="w-full py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-          Buy Now
-        </button>
       </div>
     </div>
   </div>
@@ -57,24 +54,86 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const selectedPrice = ref('all')
 const selectedRating = ref('all')
+const router = useRouter()
 
 const products = [
-  { name: "Nike Air Max 90", price: 120, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 4 },
-  { name: "Adidas Ultraboost 21", price: 180, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 5 },
-  { name: "Puma RS-X", price: 110, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 4 },
-  { name: "Reebok Classic Leather", price: 85, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 3 },
-  { name: "Converse Chuck Taylor", price: 65, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 2 },
-  { name: "New Balance 574", price: 100, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 4 },
-  { name: "Nike Air Force 1", price: 90, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 5 },
-  { name: "Adidas NMD R1", price: 130, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 3 },
-  { name: "Vans Old Skool", price: 70, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 2 },
-  { name: "Asics Gel-Lyte III", price: 110, image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_450,h_450/global/380462/01/sv01/fnd/PNA/fmt/png", rating: 4 },
-]
+    { 
+      id: 1, 
+      name: "Nike Air Max 90", 
+      price: 120, 
+      image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/w_450/global/380462/01/sv01/fnd/PNA/fmt/png", 
+      rating: 4,
+      description: "A comfortable, stylish sneaker with modern Air cushioning.",
+      sizes: ['7', '8', '9', '10', '11'],
+      colors: ['Red', 'Black', 'White'],
+      gallery: [
+        "https://avatars.mds.yandex.net/i?id=a2b6d19254384ab10082b5358dca140741b9dcd5-4549902-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=e8c9049369929dae27602f13fe0f30d5-4405789-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=fa3520103e4b3594452f0332b340aa5bc89b473f-10471476-images-thumbs&n=13"
+      ],
+      review: "A great sneaker for daily wear!"
+    },
+    { 
+      id: 2, 
+      name: "Adidas Ultraboost 21", 
+      price: 180, 
+      image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/w_450/global/380462/01/sv01/fnd/PNA/fmt/png", 
+      rating: 5,
+      description: "The best running shoes, providing unparalleled comfort.",
+      sizes: ['8', '9', '10', '11'],
+      colors: ['Blue', 'White', 'Grey'],
+      gallery: [
+        "https://avatars.mds.yandex.net/i?id=a2b6d19254384ab10082b5358dca140741b9dcd5-4549902-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=8cca5ccd69a9fd3d8648719c3c136915a67d5196-4120604-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=8550db93fb84ba36e80ecc45d042818366f9d6c9-9146142-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=41da2da91cd2182283cd724b59295348fc2056c5-4557823-images-thumbs&n=13"
+        ],
+        review: "Best running shoes I've ever had!"
+      },
+      { 
+      id: 3, 
+      name: "Adidas Ultraboost 22", 
+      price: 50, 
+      image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/w_450/global/380462/01/sv01/fnd/PNA/fmt/png", 
+      rating: 5,
+      description: "The best running shoes, providing unparalleled comfort.",
+      sizes: ['8', '9', '10', '11'],
+      colors: ['Blue', 'White', 'Grey'],
+      gallery: [
+        "https://avatars.mds.yandex.net/i?id=a2b6d19254384ab10082b5358dca140741b9dcd5-4549902-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=8cca5ccd69a9fd3d8648719c3c136915a67d5196-4120604-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=8550db93fb84ba36e80ecc45d042818366f9d6c9-9146142-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=41da2da91cd2182283cd724b59295348fc2056c5-4557823-images-thumbs&n=13"
+        ],
+        review: "Best running shoes I've ever had!"
+      },
+      { 
+      id: 4, 
+      name: "Adidas Ultraboost 25", 
+      price: 20, 
+      image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/w_450/global/380462/01/sv01/fnd/PNA/fmt/png", 
+      rating: 1,
+      description: "The best running shoes, providing unparalleled comfort.",
+      sizes: ['8', '9', '10', '11'],
+      colors: ['Blue', 'White', 'Grey'],
+      gallery: [
+        "https://avatars.mds.yandex.net/i?id=a2b6d19254384ab10082b5358dca140741b9dcd5-4549902-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=8cca5ccd69a9fd3d8648719c3c136915a67d5196-4120604-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=8550db93fb84ba36e80ecc45d042818366f9d6c9-9146142-images-thumbs&n=13",
+        "https://avatars.mds.yandex.net/i?id=41da2da91cd2182283cd724b59295348fc2056c5-4557823-images-thumbs&n=13"
+        ],
+        review: "Best running shoes I've ever had!"
+      }
+    ]
 
-// Фильтрация товаров по цене и рейтингу
+const goToProductPage = (id) => {
+  router.push(`/product/${id}`)
+}
+
 const filteredProducts = computed(() => {
   return products.filter(product => {
     const meetsPriceCriteria = selectedPrice.value === 'all' || (
@@ -82,13 +141,20 @@ const filteredProducts = computed(() => {
       || selectedPrice.value === '100-150' && product.price >= 100 && product.price <= 150
       || selectedPrice.value === '150-200' && product.price >= 150 && product.price <= 200
     )
-
     const meetsRatingCriteria = selectedRating.value === 'all' || product.rating >= parseInt(selectedRating.value)
-
     return meetsPriceCriteria && meetsRatingCriteria
   })
 })
 </script>
+
+<style scoped>
+.container {
+  margin-top: 120px;
+}
+.mt-6 {
+  margin-top:6rem;
+}
+</style>
 
 <style scoped>
 .container {
