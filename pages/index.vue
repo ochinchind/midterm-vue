@@ -1,5 +1,90 @@
 <script setup lang="ts">
+<<<<<<< HEAD
 // Script remains available for future logic
+=======
+
+import { useRouter } from 'vue-router'
+import { object, string, type InferType } from 'yup'
+import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
+import { showLoginModal, toggleLoginModal, closeLoginModal } from '~/scripts/loginModal'
+import { isAuth, authUserId, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, logout } from '~/scripts/auth'
+
+const router = useRouter()
+
+function goToProductsPage() {
+  router.push('/products') 
+}
+
+const schemaLogin = object({
+  username: string().required('Username is required').max(255, 'Maximum 255 characters'),
+  password: string()
+    .min(8, 'Must be at least 8 characters')
+    .required('Password is required')
+})
+
+type SchemaLoginType = InferType<typeof schemaLogin>
+
+const stateLogin = reactive({
+  username: undefined,
+  password: undefined
+})
+
+
+</script>
+
+<script lang="ts">
+
+export default {
+  name: 'HelloWorld',
+  props: {
+    msg: String
+  },
+  data() {
+    return {
+    };
+  },
+  computed: {
+
+  },
+  mounted() {
+    var isAuthValue = localStorage.getItem('isAuth');
+    authUserIdChange(isAuthValue ?? '');
+    changeIsAuth(isAuthValue !== null && !isNaN(Number(isAuthValue)));
+  },
+  beforeUnmount() {
+
+  },
+  methods: {
+    async LoginSubmit(event: FormSubmitEvent<SchemaLoginType>) {
+        event.preventDefault();
+
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(event.data),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Logged successful!');
+                localStorage.setItem('isAuth', result.userId);
+                changeIsAuth(true);
+                authUserIdChange(result.userId ?? '');
+                closeLoginModal();
+            } else {
+                alert('Failed to login.');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('An error occurred while submitting the form.');
+        }
+    },
+  }
+}
+>>>>>>> b02a3b396edd9b4bddd59e82c6036f2cd193a8a6
 </script>
 
 <style scoped>
@@ -91,6 +176,7 @@ p {
     background-color: rgb(251 146 60);
 }
 
+<<<<<<< HEAD
 .footer {
     background-color: #1a1a1a;
     color: white;
@@ -283,6 +369,75 @@ body {
     <!-- Hero Section -->
     <section class="section">
       <div class="container flex flex-col lg:flex-row items-center gap-10">
+=======
+.modal {
+  display: block; /* Show the modal */
+  position: fixed; 
+  z-index: 1; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 8px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+}
+</style>
+
+<style scoped>
+</style>
+
+<template>
+    <div v-show="showLoginModal" class="modal" @click.self="closeLoginModal">
+      <div class="modal-content">
+        <span class="close" @click="closeLoginModal">&times;</span>
+        <h2 style="text-align: center;
+    color: white;
+    padding: 20px;
+    margin: 0;" class="bg-orange-500">Login</h2>
+        <div class="modal-body" style=" text-align: center;   padding: 20px;">
+          <UForm @submit="LoginSubmit" :schema="schemaLogin" :state="stateLogin" >
+            <UFormGroup label="Username" name="username">
+                <UInput class="bg-white black" v-model="stateLogin.username" type="text" placeholder="Enter username" />
+            </UFormGroup>
+            <UFormGroup label="Password" name="password">
+                <UInput class="bg-white black" v-model="stateLogin.password" type="password" placeholder="Enter password" />
+            </UFormGroup>
+            <div class="mt-2">
+                <UButton type="submit" class="btn btn-orange bg-orange-200">
+                    Login
+                </UButton>
+            </div>
+          </UForm>
+        </div>
+      </div>
+    </div>
+
+
+    <main>
+    <section >
+      <div class="container flex flex-col lg:flex-row items-center py-20 gap-10">
+>>>>>>> b02a3b396edd9b4bddd59e82c6036f2cd193a8a6
         <div class="flex-1 order-2 lg:order-1 text-center lg:text-left">
           <h1 class="text-4xl lg:text-6xl font-extrabold mb-6 text-balance">
             Luxury Sneakers - Unleash Your Potential!
@@ -290,9 +445,18 @@ body {
           <p class="text-xl lg:text-2xl mb-8 text-balance">
             Discover sneakers that will elevate your style and performance.
           </p>
+<<<<<<< HEAD
           <button class="btn-orange">
             Browse Sneakers
           </button>
+=======
+          <button
+          class="px-4 py-2 self-start bg-orange-200 rounded-md text-lg cursor-pointer btn-orange"
+          @click="goToProductsPage"
+        >
+          Browse Sneakers
+        </button>
+>>>>>>> b02a3b396edd9b4bddd59e82c6036f2cd193a8a6
         </div>
         <div class="flex-1 order-1 lg:order-2">
           <NuxtImg class="w-100" src="/sneakers.webp" alt="Sneakers shop" />
