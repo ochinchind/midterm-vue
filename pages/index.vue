@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
-import { showLoginModal, toggleLoginModal } from '~/scripts/loginModal'
+import { showLoginModal, toggleLoginModal, closeLoginModal } from '~/scripts/loginModal'
 
 
 const schemaLogin = object({
@@ -75,13 +75,6 @@ export default {
             alert('An error occurred while submitting the form.');
         }
     },
-    toggleModalLogin(event: any) {
-      event.preventDefault();
-      this.showModalLogin = !this.showModalLogin;
-    },
-    closeModalLogin() {
-      this.showModalLogin = false;
-    },
     logout() {
       localStorage.removeItem('isAuth');
       this.isAuth = false;
@@ -137,9 +130,9 @@ export default {
 </style>
 
 <template>
-    <div v-show="showLoginModal" class="modal" @click.self="closeModalLogin">
+    <div v-show="showLoginModal" class="modal" @click.self="closeLoginModal">
       <div class="modal-content">
-        <span class="close" @click="closeModalLogin">&times;</span>
+        <span class="close" @click="closeLoginModal">&times;</span>
         <h2 style="text-align: center;
     color: white;
     padding: 20px;
