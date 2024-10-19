@@ -37,15 +37,14 @@
       >
         <img :src="product.image" alt="Sneaker image" class="w-full h-40 object-cover rounded-t-lg mb-4" />
         <h2 class="text-lg font-semibold mb-2 text-gray-700">{{ product.name }}</h2>
-        <p class="text-gray-500 mb-2">{{ product.price }}</p>
+        <p class="text-gray-500 mb-2">${{ product.price }}</p>
 
-        <!-- Рейтинг товара -->
+        <!-- Рейтинг товара с использованием звездочек -->
         <div class="flex items-center mb-4">
           <span v-for="n in 5" :key="n" class="text-yellow-400">
             <i v-if="n <= product.rating" class="fas fa-star"></i>
             <i v-else class="far fa-star"></i>
           </span>
-          <span class="ml-2 text-gray-500">{{ product.rating }} stars</span>
         </div>
 
         <button class="w-full py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors">

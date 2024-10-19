@@ -9,5 +9,9 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts"
   ],
 
+  css: [
+    '@fortawesome/fontawesome-free/css/all.css'
+  ],
+
   compatibilityDate: "2024-10-19"
 })
