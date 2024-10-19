@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
 import { showLoginModal, toggleLoginModal, closeLoginModal } from '~/scripts/loginModal'
-
+import { isAuth, authUserId, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, logout } from '~/scripts/auth'
 
 const router = useRouter()
 
@@ -38,10 +38,6 @@ export default {
   },
   data() {
     return {
-      showModalLogin: false,
-      isOpenAuth: false,
-      isAuth: false,
-      authUserId: '' as null|string,
     };
   },
   computed: {
@@ -49,9 +45,8 @@ export default {
   },
   mounted() {
     var isAuthValue = localStorage.getItem('isAuth');
-    this.authUserId = isAuthValue;
-
-    this.isAuth = isAuthValue !== null && !isNaN(Number(isAuthValue));
+    authUserIdChange(isAuthValue ?? '');
+    changeIsAuth(isAuthValue !== null && !isNaN(Number(isAuthValue)));
   },
   beforeUnmount() {
 
@@ -73,8 +68,9 @@ export default {
             if (result.success) {
                 alert('Logged successful!');
                 localStorage.setItem('isAuth', result.userId);
-                this.isAuth = true;
-                this.authUserId = result.userId;
+                changeIsAuth(true);
+                authUserIdChange(result.userId ?? '');
+                closeLoginModal();
             } else {
                 alert('Failed to login.');
             }
@@ -83,10 +79,6 @@ export default {
             alert('An error occurred while submitting the form.');
         }
     },
-    logout() {
-      localStorage.removeItem('isAuth');
-      this.isAuth = false;
-    }
   }
 }
 </script>
@@ -144,10 +136,8 @@ export default {
         <h2 style="text-align: center;
     color: white;
     padding: 20px;
-    margin: 0;" class="bg-gray-300">Login</h2>
-        <div class="modal-body" style=" text-align: center;   padding: 20px;
-    margin-top: 3rem;
-    margin-bottom: 3rem;">
+    margin: 0;" class="bg-orange-500">Login</h2>
+        <div class="modal-body" style=" text-align: center;   padding: 20px;">
           <UForm @submit="LoginSubmit" :schema="schemaLogin" :state="stateLogin" >
             <UFormGroup label="Username" name="username">
                 <UInput class="bg-white black" v-model="stateLogin.username" type="text" placeholder="Enter username" />
