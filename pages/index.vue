@@ -372,12 +372,43 @@ body {
         font-size: 1.5rem;
     }
 }
+
+.mt-20 {
+margin-top: 5rem;
+}
 </style>
 
 <template>
+
+<div v-show="showLoginModal" class="modal" @click.self="closeLoginModal">
+      <div class="modal-content">
+        <span class="close" @click="closeLoginModal">&times;</span>
+        <h2 style="text-align: center;
+    color: white;
+    padding: 20px;
+    margin: 0;" class="bg-gray-300">Login</h2>
+        <div class="modal-body" style=" text-align: center;   padding: 20px;
+    margin-top: 3rem;
+    margin-bottom: 3rem;">
+          <UForm @submit="LoginSubmit" :schema="schemaLogin" :state="stateLogin" >
+            <UFormGroup label="Username" name="username">
+                <UInput class="bg-white black" v-model="stateLogin.username" type="text" placeholder="Enter username" />
+            </UFormGroup>
+            <UFormGroup label="Password" name="password">
+                <UInput class="bg-white black" v-model="stateLogin.password" type="password" placeholder="Enter password" />
+            </UFormGroup>
+            <div class="mt-2">
+                <UButton type="submit" class="btn btn-orange bg-orange-200">
+                    Login
+                </UButton>
+            </div>
+          </UForm>
+        </div>
+      </div>
+    </div>
   <main>
     <!-- Hero Section -->
-    <section class="section">
+    <section class="section mt-20">
       <div class="container flex flex-col lg:flex-row items-center gap-10">
         <div class="flex-1 order-2 lg:order-1 text-center lg:text-left">
           <h1 class="text-4xl lg:text-6xl font-extrabold mb-6 text-balance">
@@ -446,7 +477,7 @@ body {
     </section>
 
     <!-- Newsletter Signup -->
-    <section class="newsletter section">
+    <section class="newsletter section text-center">
       <h2 class="section-title">Subscribe to Our Newsletter</h2>
       <p>Get the latest updates and exclusive offers.</p>
       <input type="email" class="newsletter-input" placeholder="Enter your email" />
