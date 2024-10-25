@@ -1,11 +1,10 @@
 <script setup lang="ts">
-// Script remains available for future logic
 
 import { useRouter } from 'vue-router'
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
-import { showLoginModal, toggleLoginModal, closeLoginModal } from '~/scripts/loginModal'
-import { isAuth, authUserId, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, logout } from '~/scripts/auth'
+import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, authJwtTokenChange, logout, showForgetPasswordModal, toggleForgetPasswordModal, closeForgetPasswordModal, isLoadingForgetPassword, sendForgetPasswordToEmail, isLoadingForgetChangePassword, changePasswordForget, SendLastActivity, LoginSubmit, schemaLogin, stateLogin, RegisterSubmit, schemaRegister, stateRegister, showLoginModal, toggleLoginModal, closeLoginModal, showRegisterModal, toggleRegisterModal, closeRegisterModal } from '~/scripts/auth'
+import { notifyUser, notificationMessage } from '~/scripts/notifications'
 
 const router = useRouter()
 
@@ -17,28 +16,13 @@ const categories = [
   { name: 'Accessories', slug: 'accessories' }
 ]
 
-// Function to navigate to the selected category
-function goToCategory(slug: string) {  // Explicitly define the type of slug
+function goToCategory(slug: string) {
   router.push(`/products/${slug}`)
 }
 
 function goToProductsPage() {
   router.push('/products') 
 }
-
-const schemaLogin = object({
-  username: string().required('Username is required').max(255, 'Maximum 255 characters'),
-  password: string()
-    .min(8, 'Must be at least 8 characters')
-    .required('Password is required')
-})
-
-type SchemaLoginType = InferType<typeof schemaLogin>
-
-const stateLogin = reactive({
-  username: undefined,
-  password: undefined
-})
 
 
 </script>
@@ -55,50 +39,28 @@ export default {
     };
   },
   computed: {
-
+    
   },
   mounted() {
     var isAuthValue = localStorage.getItem('isAuth');
+    var authJwtTokenValue = localStorage.getItem('jwtToken');
     authUserIdChange(isAuthValue ?? '');
     changeIsAuth(isAuthValue !== null && !isNaN(Number(isAuthValue)));
+    authJwtTokenChange(authJwtTokenValue ?? '');
+    if (authJwtToken !== null) {
+        SendLastActivity();
+    }
   },
   beforeUnmount() {
 
   },
   methods: {
-    async LoginSubmit(event: FormSubmitEvent<SchemaLoginType>) {
-        event.preventDefault();
-
-        try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(event.data),
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                alert('Logged successful!');
-                localStorage.setItem('isAuth', result.userId);
-                changeIsAuth(true);
-                authUserIdChange(result.userId ?? '');
-                closeLoginModal();
-            } else {
-                alert('Failed to login.');
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            alert('An error occurred while submitting the form.');
-        }
-    },
+    
   }
 }
 </script>
 
 <style scoped>
-/* Utility classes for responsive layout and better visuals */
 .w-100 {
     width: 100%;
 }
@@ -204,7 +166,7 @@ p {
 }
 
 .footer-links a:hover {
-    color: #f97316; /* orange color on hover */
+    color: #f97316;
 }
 
 .footer-social {
@@ -379,32 +341,52 @@ margin-top: 5rem;
 </style>
 
 <template>
+<NotificationModal :message="notificationMessage" />
 
-<div v-show="showLoginModal" class="modal" @click.self="closeLoginModal">
-      <div class="modal-content">
-        <span class="close" @click="closeLoginModal">&times;</span>
-        <h2 style="text-align: center;
-    color: white;
-    padding: 20px;
-    margin: 0;" class="bg-gray-300">Login</h2>
-        <div class="modal-body" style=" text-align: center;   padding: 20px;
-    margin-top: 3rem;
-    margin-bottom: 3rem;">
-          <UForm @submit="LoginSubmit" :schema="schemaLogin" :state="stateLogin" >
-            <UFormGroup label="Username" name="username">
-                <UInput class="bg-white black" v-model="stateLogin.username" type="text" placeholder="Enter username" />
-            </UFormGroup>
-            <UFormGroup label="Password" name="password">
-                <UInput class="bg-white black" v-model="stateLogin.password" type="password" placeholder="Enter password" />
-            </UFormGroup>
-            <div class="mt-2">
-                <UButton type="submit" class="btn btn-orange bg-orange-200">
-                    Login
-                </UButton>
+<div v-show="showLoginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50" @click.self="closeLoginModal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <button @click="closeLoginModal" class="text-white text-2xl absolute top-4 right-4">&times;</button>
+            <h2 class="text-center text-white text-2xl font-semibold mb-6 bg-gray-100 p-4 rounded-t-lg">Login</h2>
+            <div class="modal-body text-center p-6">
+                <UForm @submit="LoginSubmit" :schema="schemaLogin" :state="stateLogin">
+                    <UFormGroup label="Username" name="username" class="mb-4">
+                        <UInput class="w-full p-2 text-black bg-white border border-gray-100 rounded-md" v-model="stateLogin.username" type="text" placeholder="Enter username" />
+                    </UFormGroup>
+                    <UFormGroup label="Password" name="password" class="mb-4">
+                        <UInput class="w-full p-2 text-black bg-white border border-gray-100 rounded-md" v-model="stateLogin.password" type="password" placeholder="Enter password" />
+                    </UFormGroup>
+                    <div class="mt-4">
+                        <UButton type="submit" class="w-full py-2 text-white bg-orange-500 hover:bg-orange-600 rounded-md">
+                            Login
+                        </UButton>
+                    </div>
+                </UForm>
             </div>
-          </UForm>
         </div>
-      </div>
+    </div>
+    <div v-show="showRegisterModal" class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50" @click.self="closeRegisterModal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md ">
+            <button @click="closeRegisterModal" class="text-white text-2xl absolute top-4 right-4">&times;</button>
+            <h2 class="text-center text-white text-2xl font-semibold mb-6 bg-gray-100 p-4 rounded-t-lg">Register</h2>
+            <div class="modal-body text-center p-6">
+                <UForm @submit="RegisterSubmit" :schema="schemaRegister" :state="stateRegister">
+                  <UFormGroup label="Email" name="email" class="mb-4">
+                        <UInput class="w-full p-2 text-black bg-white border border-gray-100 rounded-md" v-model="stateRegister.email" type="email" placeholder="Enter email" />
+                    </UFormGroup>
+                    <UFormGroup label="Username" name="username" class="mb-4">
+                        <UInput class="w-full p-2 text-black bg-white border border-gray-100 rounded-md" v-model="stateRegister.username" type="text" placeholder="Enter username" />
+                    </UFormGroup>
+                    <UFormGroup label="Password" name="password" class="mb-4">
+                        <UInput class="w-full p-2 text-black bg-white border border-gray-100 rounded-md" v-model="stateRegister.password" type="password" placeholder="Enter password" />
+                    </UFormGroup>
+                    <div class="mt-4">
+                        <UButton type="submit" class="w-full py-2 text-white bg-orange-500 hover:bg-orange-600 rounded-md">
+                            Register
+                        </UButton>
+                    </div>
+                </UForm>
+            </div>
+        </div>
     </div>
   <main>
     <!-- Hero Section -->

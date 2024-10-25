@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { toggleLoginModal } from '~/scripts/loginModal'
-import { isAuth, authUserId, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, logout } from '~/scripts/auth'
-
+import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, authJwtTokenChange, logout, showForgetPasswordModal, toggleForgetPasswordModal, closeForgetPasswordModal, isLoadingForgetPassword, sendForgetPasswordToEmail, isLoadingForgetChangePassword, changePasswordForget, SendLastActivity, showLoginModal, toggleLoginModal, closeLoginModal, showRegisterModal, toggleRegisterModal, closeRegisterModal } from '~/scripts/auth'
 </script>
 
 <style>
@@ -36,6 +34,7 @@ import { isAuth, authUserId, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <button @click="toggleLoginModal" v-if="!isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Log in <span aria-hidden="true">&rarr;</span></button>
+        <button @click="toggleRegisterModal" v-if="!isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Create account <span aria-hidden="true">&rarr;</span></button>
         <NuxtLink to="/profile" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2 me-2">Profile<span aria-hidden="true">&rarr;</span></NuxtLink>
         <button @click="logout" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link-red p-2">Logout</button>
       </div>
@@ -62,7 +61,9 @@ import { isAuth, authUserId, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth
             </div>
             <div class="py-6">
                 <button @click="toggleLoginModal" v-if="!isAuth"  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Log in</button>
+                <button @click="toggleRegisterModal" v-if="!isAuth"  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Create account</button>
                 <NuxtLink to="/profile" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Profile</NuxtLink>
+                <button @click="logout" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Logout</button>
             </div>
           </div>
         </div>
