@@ -5,6 +5,8 @@ import { object, string, type InferType } from 'yup'
 import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
 import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAuth, falseIsAuth, authUserIdChange, authJwtTokenChange, logout, showForgetPasswordModal, toggleForgetPasswordModal, closeForgetPasswordModal, isLoadingForgetPassword, sendForgetPasswordToEmail, isLoadingForgetChangePassword, changePasswordForget, SendLastActivity, LoginSubmit, schemaLogin, stateLogin, RegisterSubmit, schemaRegister, stateRegister, showLoginModal, toggleLoginModal, closeLoginModal, showRegisterModal, toggleRegisterModal, closeRegisterModal } from '~/scripts/auth'
 import { notifyUser, notificationMessage } from '~/scripts/notifications'
+import { type Product } from '~/types/types';
+import { getStarStyle } from '~/scripts/getStarStyle'
 
 const router = useRouter()
 
@@ -16,7 +18,7 @@ const categories = [
 ]
 
 function goToCategory(slug: string) {
-  router.push(`/products/${slug}`)
+  router.push(`/products?slug=${slug}`)
 }
 
 function goToProductsPage() {
@@ -60,6 +62,23 @@ const submitEmailNews = async (event: any) => {
   }
 };
 
+
+const randomProducts = ref<Product[]>([]);
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/api/getrandomproducts');
+    if (response.ok) {
+      const products = await response.json();
+      randomProducts.value = products.products;
+    } else {
+      console.error('Failed to fetch random products');
+    }
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  }
+});
+
 </script>
 
 <script lang="ts">
@@ -82,7 +101,7 @@ export default {
     authUserIdChange(isAuthValue ?? '');
     changeIsAuth(isAuthValue !== null && !isNaN(Number(isAuthValue)));
     authJwtTokenChange(authJwtTokenValue ?? '');
-    if (authJwtToken !== null) {
+    if (authJwtToken.value !== null && authJwtToken.value !== '') {
         SendLastActivity();
     }
   },
@@ -94,6 +113,22 @@ export default {
   }
 }
 </script>
+
+<style>
+.stars {
+    font-size: 1.5em;
+    letter-spacing: 6px;
+    background: -webkit-gradient(linear, left top, right top, color-stop(0, #ffb904), color-stop(55%, #ffb904), color-stop(0, #e4e4e4), to(#e4e4e4));
+    background: linear-gradient(90deg, #ffb904 0, #ffb904 55%, #e4e4e4 0, #e4e4e4 100%);
+    -webkit-background-clip: text;
+    color: transparent;
+    line-height: 1;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+</style>
 
 <style scoped>
 .w-100 {
@@ -381,7 +416,7 @@ margin-top: 5rem;
 <div v-show="showLoginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50" @click.self="closeLoginModal">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
             <button @click="closeLoginModal" class="text-white text-2xl absolute top-4 right-4">&times;</button>
-            <h2 class="text-center text-white text-2xl font-semibold mb-6 bg-gray-100 p-4 rounded-t-lg">Login</h2>
+            <h2 class="text-center text-dark text-2xl font-semibold mb-6 bg-gray-100 p-4 rounded-t-lg">Login</h2>
             <div class="modal-body text-center p-6">
                 <UForm @submit="LoginSubmit" :schema="schemaLogin" :state="stateLogin">
                     <UFormGroup label="Username" name="username" class="mb-4">
@@ -402,7 +437,7 @@ margin-top: 5rem;
     <div v-show="showRegisterModal" class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50" @click.self="closeRegisterModal">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-md ">
             <button @click="closeRegisterModal" class="text-white text-2xl absolute top-4 right-4">&times;</button>
-            <h2 class="text-center text-white text-2xl font-semibold mb-6 bg-gray-100 p-4 rounded-t-lg">Register</h2>
+            <h2 class="text-center text-dark text-2xl font-semibold mb-6 bg-gray-100 p-4 rounded-t-lg">Register</h2>
             <div class="modal-body text-center p-6">
                 <UForm @submit="RegisterSubmit" :schema="schemaRegister" :state="stateRegister">
                   <UFormGroup label="Email" name="email" class="mb-4">
@@ -447,29 +482,44 @@ margin-top: 5rem;
       </div>
     </section>
 
-    <!-- New Arrivals Section -->
-    <section class="new-arrivals section">
-      <h2 class="section-title">New Arrivals</h2>
-      <div class="product-grid">
-        <!-- Example Product Item -->
-        <div class="product-item">
-          <NuxtImg class="product-image" src="/sneakers.jpg" alt="Sneaker 1" />
-          <h3 class="product-name">Sneaker Model 1</h3>
-          <p class="product-price">$120.00</p>
-        </div>
-        <div class="product-item">
-          <NuxtImg class="product-image" src="/sneakers.jpg" alt="Sneaker 2" />
-          <h3 class="product-name">Sneaker Model 2</h3>
-          <p class="product-price">$150.00</p>
-        </div>
-        <div class="product-item">
-          <NuxtImg class="product-image" src="/sneakers.jpg" alt="Sneaker 3" />
-          <h3 class="product-name">Sneaker Model 3</h3>
-          <p class="product-price">$130.00</p>
-        </div>
-        <!-- Add more products as needed -->
+    <section class="new-arrivals section py-10 bg-gray-100">
+  <h2 class="section-title text-3xl font-semibold text-center text-orange-600 mb-8">New Arrivals</h2>
+
+  <div v-if="randomProducts.length === 0" class="product-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-6 md:px-16">
+    <!-- Shimmer Placeholder -->
+    <div v-for="n in 4" :key="n" class="product-item bg-white rounded-lg shadow-md p-4 animate-pulse">
+      <div class="product-image bg-gray-300 h-48 rounded-t-lg w-full"></div>
+      <div class="product-info mt-4">
+        <div class="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
+        <div class="h-5 bg-gray-300 rounded w-1/4 mb-2"></div>
+        <div class="h-5 bg-gray-200 rounded w-1/2"></div>
       </div>
-    </section>
+    </div>
+  </div>
+
+  <!-- Products Grid -->
+  <div v-else class="product-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-6 md:px-16">
+    <NuxtLink 
+      v-for="product in randomProducts" 
+      :key="product.id" 
+      :to="`/product/${product.id}`" 
+      class="product-item bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-4 block"
+    >
+      <NuxtImg 
+        :src="product.image_url || '/sneakers.jpg'" 
+        :alt="product.name || 'Default Sneaker'" 
+        class="product-image w-full h-48 object-cover rounded-t-lg"
+      />
+      <div class="product-info mt-4">
+        <h3 class="product-name text-lg font-semibold text-gray-800">{{ product.name }}</h3>
+        <p class="product-price text-orange-500 font-bold mt-2">${{ product.price }}</p>
+        <p class="product-rating text-gray-600 mt-2">
+          Rating: <span class="stars" :style="getStarStyle(product.rating)">★★★★★</span>
+        </p>
+      </div>
+    </NuxtLink>
+  </div>
+</section>
 
      <!-- Categories Section -->
   <section class="categories section">

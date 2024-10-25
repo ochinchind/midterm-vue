@@ -13,3 +13,19 @@ export interface User {
     location: string|null;
     activated: boolean;
 }
+
+export interface Product {
+    id: number;
+    name: string;
+    description: string;
+    rating: number;
+    price: number;
+    image_url: string;
+    category_name: string|null;
+  }
+
+  export interface Category {
+    id: number;
+    name: string;
+    slug: string;
+  }

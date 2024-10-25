@@ -31,6 +31,7 @@ import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAut
       </div>
       <div class="hidden lg:flex lg:gap-x-12">
         <NuxtLink to="/" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Home</NuxtLink>
+        <NuxtLink to="/products" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Products</NuxtLink>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <button @click="toggleLoginModal" v-if="!isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Log in <span aria-hidden="true">&rarr;</span></button>

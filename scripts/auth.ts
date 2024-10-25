@@ -170,7 +170,7 @@ export async function LoginSubmit(event: FormSubmitEvent<SchemaLoginType>) {
 
         const result = await response.json();
         if (result.success) {
-            notifyUser('Logged successful!');
+            notifyUser('Logged successful!', 'success');
             localStorage.setItem('isAuth', result.userId);
             localStorage.setItem('jwtToken', result.token);
             trueIsAuth();
