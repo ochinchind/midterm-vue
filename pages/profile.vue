@@ -188,7 +188,6 @@ const submitCode = async (event: any) => {
 }
 </style>
 <template>
-  <!-- Notification Modal -->
   <NotificationModal :message="notificationMessage" />
 
   <main class="bg-gray-100 min-h-screen py-10 mt-20">
@@ -197,7 +196,6 @@ const submitCode = async (event: any) => {
       
       <div v-if="user">
         <UForm @submit="updateUser" :schema="schema" :state="formState" class="space-y-4">
-          <!-- Email Field -->
           <UFormGroup label="Email" name="email">
             <UInput
               v-model="formState.email"
@@ -207,7 +205,6 @@ const submitCode = async (event: any) => {
             />
           </UFormGroup>
           
-          <!-- Username Field -->
           <UFormGroup label="Username" name="username">
             <UInput
               v-model="formState.username"

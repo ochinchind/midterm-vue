@@ -8,7 +8,6 @@ import { notifyUser, notificationMessage } from '~/scripts/notifications'
 
 const router = useRouter()
 
-// Define your categories
 const categories = [
   { name: 'Men', slug: 'men' },
   { name: 'Women', slug: 'women' },
@@ -24,6 +23,42 @@ function goToProductsPage() {
   router.push('/products') 
 }
 
+const schemaSubmitEmail = object({
+  email: string().required('Email is required!').email(),
+});
+
+type SchemaSubmitEmailType = InferType<typeof schemaSubmitEmail>;
+
+const formStateSubmitEmail = reactive<SchemaSubmitEmailType>({
+  email: '',
+});
+
+const isSendingEmail = ref(false);
+
+const submitEmailNews = async (event: any) => {
+  event.preventDefault();
+  isSendingEmail.value = true;
+  try {
+    const response = await fetch('/api/subscribenews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: formStateSubmitEmail.email }),
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      notifyUser('Subscribed to news!', 'success');
+    } else {
+      notifyUser('Error when subscribing!', 'danger');
+    }
+  } catch (error) {
+    notifyUser('Error submitting code', 'danger');
+  } finally {
+    isSendingEmail.value = false;
+  }
+};
 
 </script>
 
@@ -462,8 +497,25 @@ margin-top: 5rem;
     <section class="newsletter section text-center">
       <h2 class="section-title">Subscribe to Our Newsletter</h2>
       <p>Get the latest updates and exclusive offers.</p>
-      <input type="email" class="newsletter-input" placeholder="Enter your email" />
-      <button class="btn-orange">Subscribe</button>
+      <UForm @submit="submitEmailNews"  :schema="schemaSubmitEmail" :state="formStateSubmitEmail" class="flex text-center justify-center items-center align-center">
+        <UFormGroup name="email">
+              <UInput
+                v-model="formStateSubmitEmail.email"
+                type="text"
+                placeholder="Enter the code here"
+                class="newsletter-input"
+              />
+        </UFormGroup>
+      <UButton
+              :disabled="isSendingEmail"
+                type="submit"
+                class=" py-2 text-white font-semibold bg-orange-500 rounded-md shadow hover:bg-orange-600 transition duration-300 flex items-center justify-center"
+              >
+              <div v-if="isSendingEmail" class="w-5 h-5 mr-2 border-4 border-t-orange-500 border-orange-200 rounded-full animate-spin"></div>
+              <span v-if="!isSendingEmail">Subscribe</span>
+              <span v-else>Loading...</span>
+      </UButton>
+     </UForm>
     </section>
 
     <!-- Testimonials Section -->
