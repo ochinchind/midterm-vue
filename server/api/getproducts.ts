@@ -7,12 +7,11 @@ export default defineEventHandler(async (event) => {
         const sql = usePostgres();
 
         const { price = 'all', rating = 'all', category = null, page = 1 } = body;
-        const limit = 5;
+        const limit = 10;
         const offset = (Number(page) - 1) * limit;
 
         let baseQuery = `
             FROM products p
-            LEFT JOIN products_images pi ON p.id = pi.product_id
             LEFT JOIN categories c ON p.category_id = c.id
         `;
 
@@ -43,11 +42,11 @@ export default defineEventHandler(async (event) => {
                 p.price,
                 p.rating, 
                 p.created_at, 
-                pi.photo AS image_url,
+                (SELECT pi.photo FROM products_images pi WHERE pi.product_id = p.id LIMIT 1) AS image_url,
                 c.name AS category_name
             ${baseQuery}
             ${whereClause}
-            ORDER BY p.created_at DESC
+            ORDER BY p.id ASC
             LIMIT $${params.length + 1} OFFSET $${params.length + 2}
         `;
         params.push(limit, offset);

@@ -33,25 +33,27 @@ export default defineEventHandler(async (event) => {
         const reviewsResult = await sql.unsafe(reviewsQuery);
 
         const authHeader = headers['authorization'];
+        let isInCart = false;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return { success: false, message: 'Authorization header missing or invalid' };
-        }
-        
-        const token = authHeader.split(' ')[1];
-        const userResult = await sql`SELECT id FROM users WHERE token = ${token}`;
-        if (userResult.length === 0) {
-            return { success: false, message: 'User not found' };
-        }
-        const userId = userResult[0].id;
+            
+        } else {
+            const token = authHeader.split(' ')[1];
+            const userResult = await sql`SELECT id FROM users WHERE token = ${token}`;
+            if (userResult.length !== 0) {
+                const userId = userResult[0].id;
 
-        const cartQuery = `
-            SELECT cp.product_id
-            FROM cart c
-            LEFT JOIN cart_products cp ON c.id = cp.cart_id
-            WHERE c.user_id = ${userId} AND c.status = 1 AND cp.product_id = ${id}
-        `;
-        const cartResult = await sql.unsafe(cartQuery);
-        const isInCart = cartResult.length > 0;
+                const cartQuery = `
+                    SELECT cp.product_id
+                    FROM cart c
+                    LEFT JOIN cart_products cp ON c.id = cp.cart_id
+                    WHERE c.user_id = ${userId} AND c.status = 1 AND cp.product_id = ${id}
+                `;
+                const cartResult = await sql.unsafe(cartQuery);
+                isInCart = cartResult.length > 0;    
+            } else {
+                isInCart = false;
+            }
+        }
 
         event.waitUntil(sql.end());
 
@@ -61,7 +63,7 @@ export default defineEventHandler(async (event) => {
                 ...product,
                 photos: imagesResult.map(row => row.image_url),
                 reviews: reviewsResult,
-                isInCart
+                isInCart: isInCart
             }
         };
     } catch (error) {

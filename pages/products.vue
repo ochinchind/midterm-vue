@@ -86,7 +86,7 @@
     <!-- Список товаров -->
     <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       <!-- Shimmer Effect for Loading State -->
-      <div v-for="index in 5" :key="index" class="border p-4 bg-white shadow-lg rounded-lg animate-pulse">
+      <div v-for="index in 10" :key="index" class="border p-4 bg-white shadow-lg rounded-lg animate-pulse">
         <div class="w-full h-40 bg-gray-300 rounded-t-lg mb-4"></div>
         <div class="h-6 bg-gray-300 rounded mb-2"></div>
         <div class="h-4 bg-gray-300 rounded mb-2"></div>
@@ -197,7 +197,7 @@ const fetchProducts = async () => {
     const result = await response.json()
     if (result.success) {
       products.value = result.products
-      totalPages.value = Math.ceil(result.totalProducts / 5)
+      totalPages.value = Math.ceil(result.totalProducts / 10)
     }
   } catch (error) {
     console.error('Error fetching products:', error)

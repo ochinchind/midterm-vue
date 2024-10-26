@@ -37,6 +37,7 @@ import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAut
         <button @click="toggleLoginModal" v-if="!isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Log in <span aria-hidden="true">&rarr;</span></button>
         <button @click="toggleRegisterModal" v-if="!isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Create account <span aria-hidden="true">&rarr;</span></button>
         <NuxtLink to="/profile" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2 me-2">Profile<span aria-hidden="true">&rarr;</span></NuxtLink>
+        <NuxtLink to="/cart" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2 me-2">Cart</NuxtLink>
         <button @click="logout" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link-red p-2">Logout</button>
       </div>
     </nav>
@@ -64,6 +65,7 @@ import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAut
                 <button @click="toggleLoginModal" v-if="!isAuth"  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Log in</button>
                 <button @click="toggleRegisterModal" v-if="!isAuth"  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Create account</button>
                 <NuxtLink to="/profile" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Profile</NuxtLink>
+                <NuxtLink to="/cart" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Cart</NuxtLink>
                 <button @click="logout" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Logout</button>
             </div>
           </div>

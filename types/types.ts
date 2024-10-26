@@ -55,3 +55,12 @@ export interface Product {
   export interface Photo {
     photo: string;
   }
+
+  export interface CartItem {
+    id: number;
+    product_id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    quantity: number;
+  }

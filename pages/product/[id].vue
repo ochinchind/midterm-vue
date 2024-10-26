@@ -154,7 +154,7 @@
         </UForm>
       </div>
   
-        <button @click="addToCart"
+        <button @click="addToCart" v-if="isAuth"
         :class="[
             'w-full py-4 text-white rounded-lg font-semibold text-2xl transition-colors',
             product.isInCart 
@@ -243,12 +243,10 @@ const submitReview = async () => {
   }
 }
 
-// Update main image function
 const updateMainImage = (image: any) => {
   currentImage.value = image
 }
 
-// Fetch product details, including photos and reviews
 const fetchProduct = async () => {
   try {
     const response = await fetch(`/api/products/${productId}`, {
@@ -302,8 +300,8 @@ onMounted(async () => {
     authJwtTokenChange(authJwtTokenValue ?? '');
     if (authJwtToken.value !== null && authJwtToken.value !== '') {
         SendLastActivity();
-        fetchProduct()
     }
+    fetchProduct()
 });
 
 </script>
