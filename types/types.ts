@@ -29,3 +29,28 @@ export interface Product {
     name: string;
     slug: string;
   }
+
+  export interface ProductDetail {
+    id: number;
+    name: string;
+    description: string;
+    rating: number;
+    price: number;
+    image_url: string;
+    category_name: string|null;
+    photos: Photo[];
+    reviews: Review[];
+  }
+
+  export interface Review {
+    id: number;
+    text: string;
+    rating: string;
+    created_at: string;
+    username: string;
+    last_activity: string;
+  }
+
+  export interface Photo {
+    photo: string;
+  }
