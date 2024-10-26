@@ -36,6 +36,7 @@ export function logout() {
     localStorage.removeItem('jwtToken');
     changeIsAuth(false);
     notifyUser('Logged out!');
+    window.location.reload();
 }
 
 export const showForgetPasswordModal = ref(false)
