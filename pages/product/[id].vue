@@ -154,9 +154,14 @@
         </UForm>
       </div>
   
-        <!-- Add to Cart Button -->
-        <button class="w-full py-4 bg-gradient-to-r from-blue-500 to-green-400 text-white rounded-lg font-semibold text-2xl hover:bg-green-500 transition-colors">
-          Add to Cart
+        <button @click="addToCart"
+        :class="[
+            'w-full py-4 text-white rounded-lg font-semibold text-2xl transition-colors',
+            product.isInCart 
+              ? 'bg-red-500 hover:bg-red-600 !important' 
+              : 'bg-blue-500 hover:bg-green-500 !important'
+          ]">
+          {{ product.isInCart ? 'Remove from Cart' : 'Add to Cart' }}
         </button>
       </div>
     </div>
@@ -246,7 +251,10 @@ const updateMainImage = (image: any) => {
 // Fetch product details, including photos and reviews
 const fetchProduct = async () => {
   try {
-    const response = await fetch(`/api/products/${productId}`)
+    const response = await fetch(`/api/products/${productId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authJwtToken.value }
+    })
     const data = await response.json()
     if (data.success) {
       product.value = data.product
@@ -261,6 +269,30 @@ const fetchProduct = async () => {
   }
 }
 
+const addToCart = async () => {
+  try {
+    const response = await fetch(`/api/addtocart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authJwtToken.value },
+      body: JSON.stringify({
+        product_id: productId
+      })
+    })
+
+    const result = await response.json()
+    if (result.success) {
+      notifyUser(result.message, 'success')
+      fetchProduct();
+    
+    } else {
+      notifyUser('Failed to add to cart: ' + result.message, 'danger')
+    }
+  } catch (err) {
+    alert(err);
+    console.error('Error adding to cart:', err)
+  }
+}
+
 
 onMounted(async () => {
     var isAuthValue = localStorage.getItem('isAuth');
@@ -270,10 +302,10 @@ onMounted(async () => {
     authJwtTokenChange(authJwtTokenValue ?? '');
     if (authJwtToken.value !== null && authJwtToken.value !== '') {
         SendLastActivity();
+        fetchProduct()
     }
 });
 
-fetchProduct()
 </script>
   
 <style scoped>

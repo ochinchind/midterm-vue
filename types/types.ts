@@ -40,6 +40,7 @@ export interface Product {
     category_name: string|null;
     photos: Photo[];
     reviews: Review[];
+    isInCart: boolean;
   }
 
   export interface Review {

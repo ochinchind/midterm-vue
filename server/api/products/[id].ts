@@ -2,28 +2,27 @@ import { defineEventHandler } from 'h3';
 
 export default defineEventHandler(async (event) => {
     const { id } = event.context.params;
+    const headers = event.req.headers;
 
     try {
         const sql = usePostgres();
 
-        // Fetch product details
-        const productQuery = `SELECT products.id, products.name, products.description, products.category_id, products.rating, products.price, c.name as category_name
+        const productQuery = `
+            SELECT products.id, products.name, products.description, products.category_id, products.rating, products.price, c.name as category_name
             FROM products 
-            LEFT JOIN categories c ON products.category_id = c.id WHERE products.id = ${id}`;
-
+            LEFT JOIN categories c ON products.category_id = c.id 
+            WHERE products.id = ${id}
+        `;
         const productResult = await sql.unsafe(productQuery);
 
         if (productResult.length === 0) {
             return { success: false, message: 'Product not found' };
         }
-
         const product = productResult[0];
 
-        // Fetch all images for the product
         const imagesQuery = `SELECT photo AS image_url FROM products_images WHERE product_id = ${id}`;
         const imagesResult = await sql.unsafe(imagesQuery);
 
-        // Fetch all reviews for the product
         const reviewsQuery = `
             SELECT r.user_id, r.text, r.rating, r.created_at, u.username, u.last_activity
             FROM products_reviews r
@@ -33,6 +32,27 @@ export default defineEventHandler(async (event) => {
         `;
         const reviewsResult = await sql.unsafe(reviewsQuery);
 
+        const authHeader = headers['authorization'];
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return { success: false, message: 'Authorization header missing or invalid' };
+        }
+        
+        const token = authHeader.split(' ')[1];
+        const userResult = await sql`SELECT id FROM users WHERE token = ${token}`;
+        if (userResult.length === 0) {
+            return { success: false, message: 'User not found' };
+        }
+        const userId = userResult[0].id;
+
+        const cartQuery = `
+            SELECT cp.product_id
+            FROM cart c
+            LEFT JOIN cart_products cp ON c.id = cp.cart_id
+            WHERE c.user_id = ${userId} AND c.status = 1 AND cp.product_id = ${id}
+        `;
+        const cartResult = await sql.unsafe(cartQuery);
+        const isInCart = cartResult.length > 0;
+
         event.waitUntil(sql.end());
 
         return {
@@ -40,7 +60,8 @@ export default defineEventHandler(async (event) => {
             product: {
                 ...product,
                 photos: imagesResult.map(row => row.image_url),
-                reviews: reviewsResult
+                reviews: reviewsResult,
+                isInCart
             }
         };
     } catch (error) {
