@@ -117,82 +117,75 @@
     import { formatDistanceToNow } from 'date-fns'
 
     const router = useRouter();
-    const cartItems = ref<CartItem[] | null>(null)
+    const cartItems = ref<CartItem[] | null>(null);
 
-    const fetchCartItems = async () => {
-    try {
-            const response = await fetch('/api/getcart', {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') 
-                }
-            })
-            const result = await response.json()
-            if (result.success) {
-                cartItems.value = result.cartItems
-            } else {
-                notifyUser('Failed to load cart items', 'danger')
-            }
-        } catch (error) {
-            console.error('Error fetching cart items:', error)
-            notifyUser('Error fetching cart items', 'danger')
+    const fetchCartItems = () => {
+        const rawCartData = localStorage.getItem('cart');
+        if (rawCartData) {
+            const parsedCart = JSON.parse(rawCartData);
+
+            const transformedCart: CartItem[] = parsedCart.map((item: any) => ({
+                id: item.id,
+                product_id: item.id, // Default product_id to id
+                name: item.name,
+                price: item.price || 0, // Default price to 0 if not provided
+                quantity: item.quantity || 1, // Default quantity to 1
+                description: item.description,
+                rating: item.rating,
+                image_url: item.image_url ?? item.photos[0],
+                category_name: item.category_name,
+                photos: item.photos,
+                reviews: item.reviews,
+                isInCart: item.isInCart,
+            }));
+
+            cartItems.value = transformedCart;
+        } else {
+            cartItems.value = [];
         }
+    };
+
+    const saveCartToLocalStorage = () => {
+    try {
+        localStorage.setItem('cart', JSON.stringify(cartItems.value));
+    } catch (error) {
+        console.error('Error saving cart to localStorage:', error);
+        notifyUser('Failed to save cart items', 'danger');
     }
+    };
 
     const totalAmount = computed(() => {
-        return cartItems.value?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0 
-    })
+    return cartItems.value?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
+    });
 
-    const updateQuantity = async (item: CartItem) => {
-        try {
-            const response = await fetch(`/api/updatecartquantity`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authJwtToken.value },
-                body: JSON.stringify({
-                    product_id: item.product_id,
-                    quantity: item.quantity
-                })
-            })
-
-            const result = await response.json()
-            if (result.success) {
-                notifyUser('Quantity updated', 'success')
-                fetchCartItems();
-            
-            } else {
-                notifyUser('Failed to update quantity: ' + result.message, 'danger')
-            }
-        } catch (err) {
-            alert(err);
-            console.error('Error updating quantity:', err)
+    const updateQuantity = (item: CartItem) => {
+    try {
+        const targetItem = cartItems.value?.find(cartItem => cartItem.id === item.id);
+        if (targetItem) {
+        targetItem.quantity = item.quantity;
+        saveCartToLocalStorage();
+        notifyUser('Quantity updated', 'success');
         }
-        
+    } catch (error) {
+        console.error('Error updating quantity:', error);
+        notifyUser('Failed to update quantity', 'danger');
     }
+    };
 
-    const removeFromCart = async (item: CartItem) => {
-
-        try {
-            const response = await fetch(`/api/addtocart`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authJwtToken.value },
-            body: JSON.stringify({
-                product_id: item.product_id
-            })
-            })
-
-            const result = await response.json()
-            if (result.success) {
-            notifyUser(result.message, 'success')
-            fetchCartItems();
-            
-            } else {
-            notifyUser('Failed to add to cart: ' + result.message, 'danger')
-            }
-        } catch (err) {
-            alert(err);
-            console.error('Error adding to cart:', err)
-        }
-
+    const removeFromCart = (item: CartItem) => {
+    try {
+        cartItems.value = cartItems.value?.filter(cartItem => cartItem.id !== item.id) || [];
+        saveCartToLocalStorage();
+        notifyUser('Item removed from cart', 'success');
+    } catch (error) {
+        console.error('Error removing item from cart:', error);
+        notifyUser('Failed to remove item', 'danger');
     }
+    };
+
+    onMounted(() => {
+        fetchCartItems();
+    });
 
     const checkout = () => {
         notifyUser('Proceeding to checkout', 'info')

@@ -64,4 +64,10 @@ export interface Product {
     price: number;
     image_url: string;
     quantity: number;
+    description: string;
+    rating: number;
+    category_name: string|null;
+    photos: Photo[];
+    reviews: Review[];
+    isInCart: boolean;
   }
