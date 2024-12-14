@@ -188,7 +188,12 @@
     });
 
     const checkout = () => {
-        notifyUser('Proceeding to checkout', 'info')
+        if (isAuth.value) {
+            router.push('/checkout');
+        } else {
+            notifyUser('Please login to proceed to checkout', 'danger');
+            showLoginModal.value = true;
+        }
     }
 
 
@@ -198,9 +203,6 @@
         authUserIdChange(isAuthValue ?? '');
         changeIsAuth(isAuthValue !== null && !isNaN(Number(isAuthValue)));
         authJwtTokenChange(authJwtTokenValue ?? '');
-        if (authJwtToken.value == '' || authJwtToken.value == null) {
-            router.push('/');
-        }
         if (authJwtToken.value !== null && authJwtToken.value !== '') {
             SendLastActivity();
             fetchCartItems()
