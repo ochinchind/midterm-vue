@@ -2,6 +2,10 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
+  plugins: [
+    '~/plugins/mixins.ts' 
+  ],
+
   modules: [
     "@nuxt/ui",
     "@nuxt/image",
@@ -12,6 +16,8 @@ export default defineNuxtConfig({
   css: [
     '@fortawesome/fontawesome-free/css/all.css'
   ],
+
+  
 
   compatibilityDate: "2024-10-19"
 })
