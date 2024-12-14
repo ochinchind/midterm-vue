@@ -32,13 +32,14 @@ import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAut
       <div class="hidden lg:flex lg:gap-x-12">
         <NuxtLink to="/" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Home</NuxtLink>
         <NuxtLink to="/products" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Products</NuxtLink>
+        <NuxtLink to="/cart" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Cart</NuxtLink>
         <NuxtLink to="/favorites" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Favorites</NuxtLink>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <button @click="toggleLoginModal" v-if="!isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Log in <span aria-hidden="true">&rarr;</span></button>
         <button @click="toggleRegisterModal" v-if="!isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Create account <span aria-hidden="true">&rarr;</span></button>
         <NuxtLink to="/profile" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2 me-2">Profile<span aria-hidden="true">&rarr;</span></NuxtLink>
-        <NuxtLink to="/cart" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2 me-2">Cart</NuxtLink>
+        <NuxtLink to="/my-orders" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2 me-2">My orders</NuxtLink>
         <button @click="logout" v-if="isAuth" class="text-sm font-semibold leading-6 text-gray-900 btn-link-red p-2">Logout</button>
       </div>
     </nav>
@@ -60,13 +61,16 @@ import { isAuth, authUserId, authJwtToken, trueIsAuth, toggleIsAuth, changeIsAut
         <div class="mt-6 flow-root">
           <div class="-my-6 divide-y divide-gray-500/10">
             <div class="space-y-2 py-6">
-              <NuxtLink to="/" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Home</NuxtLink>
+              <NuxtLink to="/" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Home</NuxtLink>                
+              <NuxtLink to="/products" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Products</NuxtLink>              
+              <NuxtLink to="/cart" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Cart</NuxtLink>
+              <NuxtLink to="/favorites" class="text-sm font-semibold leading-6 text-gray-900 btn-link p-2">Favorites</NuxtLink>
             </div>
             <div class="py-6">
                 <button @click="toggleLoginModal" v-if="!isAuth"  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Log in</button>
                 <button @click="toggleRegisterModal" v-if="!isAuth"  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Create account</button>
                 <NuxtLink to="/profile" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Profile</NuxtLink>
-                <NuxtLink to="/cart" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Cart</NuxtLink>
+                <NuxtLink to="/my-orders" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">My orders</NuxtLink>
                 <button @click="logout" v-if="isAuth" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 btn-link p-2">Logout</button>
             </div>
           </div>
