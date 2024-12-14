@@ -269,27 +269,31 @@ const fetchProduct = async () => {
 
 const addToCart = async () => {
   try {
-    const response = await fetch(`/api/addtocart`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authJwtToken.value },
-      body: JSON.stringify({
-        product_id: productId
-      })
-    })
+    // Get the current cart from localStorage or initialize it
+    const cart = JSON.parse(localStorage.getItem('cart') ?? '{}') || [];
 
-    const result = await response.json()
-    if (result.success) {
-      notifyUser(result.message, 'success')
-      fetchProduct();
-    
+    // Check if the product is already in the cart
+    const existingProductIndex = cart.findIndex((item: { product_id: string | string[] }) => item.product_id === productId);
+
+    if (existingProductIndex > -1) {
+      // Product exists, remove it
+      cart.splice(existingProductIndex, 1);
+      notifyUser('Product removed from cart', 'info');
     } else {
-      notifyUser('Failed to add to cart: ' + result.message, 'danger')
+      // Add product to cart
+      cart.push({ product_id: productId });
+      notifyUser('Product added to cart', 'success');
     }
+
+    // Update localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+
   } catch (err) {
-    alert(err);
-    console.error('Error adding to cart:', err)
+    console.error('Error managing cart locally:', err);
+    notifyUser('Something went wrong!', 'danger');
   }
-}
+};
 
 
 onMounted(async () => {
