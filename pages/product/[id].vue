@@ -154,7 +154,7 @@
         </UForm>
       </div>
   
-        <button @click="addToCart" v-if="isAuth"
+        <button @click="addToCart(product)" v-if="isAuth"
         :class="[
             'w-full py-4 text-white rounded-lg font-semibold text-2xl transition-colors',
             product.isInCart 
@@ -267,10 +267,15 @@ const fetchProduct = async () => {
   }
 }
 
-const addToCart = async () => {
+const addToCart = async (product: ProductDetail) => {
   try {
     // Get the current cart from localStorage or initialize it
-    const cart = JSON.parse(localStorage.getItem('cart') ?? '{}') || [];
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    // Ensure cart is an array
+    if (!Array.isArray(cart)) {
+      cart = []; // Initialize as an empty array if invalid
+    }
 
     // Check if the product is already in the cart
     const existingProductIndex = cart.findIndex((item: { product_id: string | string[] }) => item.product_id === productId);
@@ -278,16 +283,17 @@ const addToCart = async () => {
     if (existingProductIndex > -1) {
       // Product exists, remove it
       cart.splice(existingProductIndex, 1);
+      product.isInCart = false;
       notifyUser('Product removed from cart', 'info');
     } else {
       // Add product to cart
       cart.push({ product_id: productId });
+      product.isInCart = true;
       notifyUser('Product added to cart', 'success');
     }
 
     // Update localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
-
 
   } catch (err) {
     console.error('Error managing cart locally:', err);
