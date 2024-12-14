@@ -233,7 +233,7 @@ const handleCheckout = async () => {
       notifyUser('Order placed successfully!', 'success');
 
       // Redirect to the index page
-      router.push('/');
+      router.push('/my-orders');
     } else {
       // Show error notification
       notifyUser(data.message || 'Failed to place order', 'danger');

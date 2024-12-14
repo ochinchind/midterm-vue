@@ -50,7 +50,6 @@
     </div>
 
     <div class="my-orders mt-6">
-      <h1>My Orders</h1>
       <div v-if="loading" class="loading">Loading orders...</div>
       <div v-else-if="orders.length === 0" class="no-orders">No orders found!</div>
       <div v-else>
