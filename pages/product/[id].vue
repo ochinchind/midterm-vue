@@ -74,12 +74,25 @@
           <img :src="currentImage" alt="Main product image" class="w-full h-96 object-cover rounded-lg shadow-lg" />
         </div>
   
-        <!-- Product Name -->
-        <h1 class="text-4xl font-extrabold mb-6 text-center text-gray-800">{{ product.name }}</h1>
-  
-        <!-- Price -->
-        <p class="text-3xl font-bold text-green-600 mb-4 text-center">$ {{ product.price }}</p>
-  
+        <div class="flex items-center justify-between w-full mb-6">
+          <!-- Product Info (Name and Price in Column) -->
+          <div class="flex flex-col">
+            <!-- Product Name -->
+            <h1 class="text-4xl font-extrabold text-gray-800">{{ product.name }}</h1>
+            <!-- Price -->
+            <p class="text-3xl font-bold text-green-600">$ {{ product.price }}</p>
+          </div>
+
+          <!-- Favorite Button -->
+          <button @click="toggleFavorite(product)" 
+                  class="w-12 h-12 p-2 rounded-full transition-colors flex-shrink-0"
+                  :class="product.isInFavorites ? 'bg-red-500' : 'bg-red-500'">
+            <img :src="product.isInFavorites ? '/heart.png' : '/heart.png'" 
+                alt="Favorite" 
+                class="w-full h-full object-contain" />
+          </button>
+        </div>
+        
         <div class="bg-gray-50 p-6 rounded-lg shadow-lg mb-8">
           <h2 class="text-2xl font-semibold mb-4">Product Description</h2>
           <p class="text-gray-700 leading-relaxed">{{ product.description }}</p>
@@ -154,7 +167,7 @@
         </UForm>
       </div>
   
-        <button @click="addToCart(product)" v-if="isAuth"
+        <button @click="addToCart(product)"
         :class="[
             'w-full py-4 text-white rounded-lg font-semibold text-2xl transition-colors',
             product.isInCart 
@@ -264,6 +277,12 @@ const fetchProduct = async () => {
           product.value.isInCart = true;
         }
       }
+      let favs = JSON.parse(localStorage.getItem('favs') || '[]');
+      if (product.value) {
+        if (product.value && favs.find((item: { id: number }) => item.id === product.value.id)) {
+          product.value.isInFavorites = true;
+        }
+      }
     } else {
       console.error('Product not found')
     }
@@ -308,6 +327,42 @@ const addToCart = async (product: ProductDetail) => {
     notifyUser('Something went wrong!', 'danger');
   }
 };
+
+const toggleFavorite = async (product: ProductDetail) => {
+  try {
+    // Get the current cart from localStorage or initialize it
+    let favs = JSON.parse(localStorage.getItem('favs') || '[]');
+
+    // Ensure cart is an array
+    if (!Array.isArray(favs)) {
+      favs = []; // Initialize as an empty array if invalid
+    }
+
+    // Check if the product is already in the cart when the whole product object is stored in the cart
+    const existingProductIndex = favs.findIndex((item: { id: number }) => item.id === product.id);
+    
+
+    if (existingProductIndex > -1) {
+      // Product exists, remove it
+      favs.splice(existingProductIndex, 1);
+      product.isInFavorites = false;
+      notifyUser('Product removed from favs', 'info');
+    } else {
+      // Add product to cart
+      favs.push(product);
+      product.isInFavorites = true;
+      notifyUser('Product added to favs', 'success');
+    }
+
+    // Update localStorage
+    localStorage.setItem('favs', JSON.stringify(favs));
+
+  } catch (err) {
+    console.error('Error managing cart locally:', err);
+    notifyUser('Something went wrong!', 'danger');
+  }
+};
+
 
 
 onMounted(async () => {

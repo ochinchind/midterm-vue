@@ -41,6 +41,7 @@ export interface Product {
     photos: Photo[];
     reviews: Review[];
     isInCart: boolean;
+    isInFavorites: boolean;
   }
 
   export interface Review {
