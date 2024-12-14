@@ -7,6 +7,27 @@ export const isAuth = ref(false)
 export const authUserId = ref('')
 export const authJwtToken = ref('')
 
+function setCookie(name: any, value: any, days = 7) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000)); // default expiry 7 days
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;secure;SameSite=Strict`;
+}
+
+function getCookie(name: any) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        const part = parts.pop();
+        if (part) {
+            return part.split(';').shift();
+        }
+    }
+    return null;
+}
+
+function deleteCookie(name: any) {
+    document.cookie = `${name}=; Max-Age=-99999999; path=/; secure; SameSite=Strict`;
+}
 export function toggleIsAuth() {
     isAuth.value = !isAuth.value
 }
@@ -34,6 +55,7 @@ export function authJwtTokenChange(val: string) {
 export function logout() {
     localStorage.removeItem('isAuth');
     localStorage.removeItem('jwtToken');
+    deleteCookie('jwtToken');
     changeIsAuth(false);
     notifyUser('Logged out!');
     window.location.reload();
@@ -174,6 +196,7 @@ export async function LoginSubmit(event: FormSubmitEvent<SchemaLoginType>) {
             notifyUser('Logged successful!', 'success');
             localStorage.setItem('isAuth', result.userId);
             localStorage.setItem('jwtToken', result.token);
+            setCookie('jwtToken', result.token);
             trueIsAuth();
             authUserIdChange(result.userId);
             authJwtTokenChange(result.token);
@@ -221,6 +244,7 @@ export async function RegisterSubmit(event: FormSubmitEvent<SchemaRegisterType>)
             notifyUser('Registered successful! Please verify your email in profile!');
             localStorage.setItem('isAuth', result.userId);
             localStorage.setItem('jwtToken', result.token);
+            setCookie('jwtToken', result.token);
             trueIsAuth();
             authUserIdChange(result.userId);
             authJwtTokenChange(result.token);
