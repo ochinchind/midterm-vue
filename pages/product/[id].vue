@@ -257,6 +257,13 @@ const fetchProduct = async () => {
     if (data.success) {
       product.value = data.product
       currentImage.value = data.product.photos[0] // Set initial main image
+      // check if localtosrage has in cart 
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (product.value) {
+        if (product.value && cart.find((item: { id: number }) => item.id === product.value.id)) {
+          product.value.isInCart = true;
+        }
+      }
     } else {
       console.error('Product not found')
     }
@@ -277,8 +284,9 @@ const addToCart = async (product: ProductDetail) => {
       cart = []; // Initialize as an empty array if invalid
     }
 
-    // Check if the product is already in the cart
-    const existingProductIndex = cart.findIndex((item: { product_id: string | string[] }) => item.product_id === productId);
+    // Check if the product is already in the cart when the whole product object is stored in the cart
+    const existingProductIndex = cart.findIndex((item: { id: number }) => item.id === product.id);
+    
 
     if (existingProductIndex > -1) {
       // Product exists, remove it
@@ -287,7 +295,7 @@ const addToCart = async (product: ProductDetail) => {
       notifyUser('Product removed from cart', 'info');
     } else {
       // Add product to cart
-      cart.push({ product_id: productId });
+      cart.push(product);
       product.isInCart = true;
       notifyUser('Product added to cart', 'success');
     }
