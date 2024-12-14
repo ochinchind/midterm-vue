@@ -83,14 +83,13 @@
             <p class="text-3xl font-bold text-green-600">$ {{ product.price }}</p>
           </div>
 
-          <!-- Favorite Button -->
           <button @click="toggleFavorite(product)" 
-                  class="w-12 h-12 p-2 rounded-full transition-colors flex-shrink-0"
-                  :class="product.isInFavorites ? 'bg-red-500' : 'bg-red-500'">
-            <img :src="product.isInFavorites ? '/heart.png' : '/heart.png'" 
-                alt="Favorite" 
-                class="w-full h-full object-contain" />
-          </button>
+        class="favorite-button"
+        :class="product.isInFavorites ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 hover:bg-gray-400'">
+  <img :src="product.isInFavorites ? '/fav.png' : '/not_fav.png'" 
+       alt="Favorite" 
+       class="w-full h-full object-contain" />
+</button>
         </div>
         
         <div class="bg-gray-50 p-6 rounded-lg shadow-lg mb-8">
@@ -394,10 +393,34 @@ img {
 .mt-6 {
   margin-top: 6rem;
 }
+
 button {
   font-size: 1.5rem;
   font-weight: bold;
   background: linear-gradient(90deg, rgba(72,149,239,1) 0%, rgba(0,212,255,1) 100%);
+}
+
+.favorite-button {
+  background: transparent !important; /* Remove any inherited background */
+  border: none; /* Remove any borders */
+  box-shadow: none; /* Remove any box shadow if any */
+  width: 50px; /* Set width to 30px */
+  height: 50px; /* Set height to 30px */
+  padding: 0; /* Remove padding to make it exactly 30px by 30px */
+  display: flex; /* Flexbox to align the image */
+  justify-content: center; /* Center image horizontally */
+  align-items: center; /* Center image vertically */
+}
+
+.favorite-button:focus,
+.favorite-button:hover {
+  background: transparent !important; /* Ensure transparency on hover and focus */
+}
+
+.favorite-button img {
+  width: 50px; /* Set image width */
+  height: 50px; /* Set image height */
+  object-fit: contain; /* Ensure the image is contained within the button */
 }
 
 button:hover {
